@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_NAME = "main6.db"
+DB_NAME = "main.db"
 
 
 def create_db():
@@ -61,5 +61,17 @@ def create_db():
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+
+    cursor.execute("""
+            CREATE TABLE IF NOT EXISTS link_requests (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                telegram_id INTEGER NOT NULL,
+                channel_name TEXT NOT NULL,
+                message TEXT NOT NULL,
+                status TEXT DEFAULT 'pending',
+                admin_response TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
 
     conn.commit()

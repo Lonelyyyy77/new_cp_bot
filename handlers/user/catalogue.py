@@ -1,12 +1,39 @@
 import sqlite3
 
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.types import CallbackQuery, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
+from bot import TOKEN
 from database import DB_NAME
+from database.admin.admin import get_admin_id
 
 router = Router()
+
+async def save_link_request(telegram_id: int, channel_name: str):
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    message = f"Запрос на ссылку канала {channel_name} от пользователя ID {telegram_id}"
+
+    cursor.execute('''
+        INSERT INTO link_requests (telegram_id, channel_name, message)
+        VALUES (?, ?, ?)
+    ''', (telegram_id, channel_name, message))
+    conn.commit()
+    conn.close()
+
+    admin_id = get_admin_id()
+    if admin_id:
+        kb = InlineKeyboardBuilder()
+        kb.row(InlineKeyboardButton(text='Посмотреть запросы на ссылки', callback_data='view_link_request'))
+
+        bot = Bot(token=TOKEN)
+        await bot.send_message(
+            admin_id,
+            f"Пользователь с ID {telegram_id} запросил ссылку на канал: {channel_name}.",
+            reply_markup=kb.as_markup()
+        )
 
 
 @router.callback_query(lambda c: c.data == 'catalogue')
@@ -30,20 +57,26 @@ async def show_catalogue(callback_query: CallbackQuery):
 @router.callback_query(lambda c: c.data == 'buy_photos')
 async def buy_photos(callback_query: CallbackQuery):
     price = 45
-    link = "https://t.me/photos_channel"
+    channel_name = "Photos"
 
-    await process_purchase(callback_query, price, link)
+    await save_link_request(callback_query.from_user.id, channel_name)
+
+    # Обрабатываем покупку
+    await process_purchase(callback_query, price)
 
 
 @router.callback_query(lambda c: c.data == 'buy_videos_photos')
 async def buy_videos_photos(callback_query: CallbackQuery):
     price = 90
-    link = "https://t.me/videos_photos_channel"
+    channel_name = "Videos + Photos"
 
-    await process_purchase(callback_query, price, link)
+    await save_link_request(callback_query.from_user.id, channel_name)
+
+    await process_purchase(callback_query, price)
 
 
-async def process_purchase(callback_query: CallbackQuery, price: int, link: str):
+
+async def process_purchase(callback_query: CallbackQuery, price: int):
     telegram_id = callback_query.from_user.id
 
     conn = sqlite3.connect(DB_NAME)
@@ -63,7 +96,7 @@ async def process_purchase(callback_query: CallbackQuery, price: int, link: str)
         cursor.execute('UPDATE users SET balance = ? WHERE telegram_id = ?', (new_balance, telegram_id))
         conn.commit()
 
-        await callback_query.message.answer(f'Спасибо за покупку! Вот ваша ссылка: {link}')
+        await callback_query.message.answer("Спасибо за запрос! Ожидайте, администратор свяжется с вами.")
     else:
         kb = InlineKeyboardBuilder()
         kb.add(InlineKeyboardButton(text='Пополнить', callback_data='replenish'))

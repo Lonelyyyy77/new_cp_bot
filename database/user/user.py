@@ -1,6 +1,11 @@
 import sqlite3
 
+from aiogram import Bot
+
 from database import DB_NAME
+
+# from bot import TOKEN
+from database.admin.admin import get_admin_id
 
 
 def get_user_status(telegram_id):
@@ -32,7 +37,6 @@ def get_user_status(telegram_id):
 def add_user(telegram_id, username, referral_code=None):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
-
     cursor.execute('SELECT * FROM users WHERE telegram_id = ?', (telegram_id,))
     existing_user = cursor.fetchone()
 
@@ -94,3 +98,25 @@ def get_user_balance(telegram_id):
 
     conn.close()
     return result[0] if result else 0
+
+
+# async def save_link_request(telegram_id: int, channel_name: str):
+#     conn = sqlite3.connect(DB_NAME)
+#     cursor = conn.cursor()
+#
+#     message = f"Запрос на ссылку канала {channel_name} от пользователя ID {telegram_id}"
+#
+#     cursor.execute('''
+#         INSERT INTO link_requests (telegram_id, channel_name, message)
+#         VALUES (?, ?, ?)
+#     ''', (telegram_id, channel_name, message))
+#     conn.commit()
+#     conn.close()
+#
+#     admin_id = get_admin_id()
+#     if admin_id:
+#         bot = Bot(token=TOKEN)
+#         await bot.send_message(
+#             admin_id,
+#             f"Пользователь с ID {telegram_id} запросил ссылку на канал: {channel_name}."
+#         )

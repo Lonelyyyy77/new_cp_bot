@@ -7,6 +7,7 @@ async def admin_routers(dp):
     from .payment_req import router as payment_req_router
     from .replenish_user import router as replenish_user_router
     from .support_msg import router as support_msg_router
+    from .link_reqs import router as link_req_router
 
     dp.include_router(wiev_workers_router)
     dp.include_router(add_worker_router)
@@ -14,3 +15,4 @@ async def admin_routers(dp):
     dp.include_router(payment_req_router)
     dp.include_router(support_msg_router)
     dp.include_router(replenish_user_router)
+    dp.include_router(link_req_router)

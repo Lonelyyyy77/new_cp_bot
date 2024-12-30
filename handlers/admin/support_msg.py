@@ -1,3 +1,4 @@
+import logging
 import sqlite3
 from datetime import datetime
 
@@ -11,6 +12,9 @@ from database import DB_NAME
 from states.admin.admin import AdminSupportState
 
 router = Router()
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 @router.callback_query(lambda c: c.data == 'view_support_messages')
@@ -36,7 +40,7 @@ async def view_support_messages(callback_query: CallbackQuery):
             f"Время: {created_at}\n"
             f"Сообщение: {support_message}\n\n"
         )
-        kb.add(InlineKeyboardButton(text=f"Ответить пользователю {telegram_id}", callback_data=f"reply_{telegram_id}"))
+        kb.add(InlineKeyboardButton(text=f"Ответить пользователю {telegram_id}", callback_data=f"reply_{user_id}"))
 
     await callback_query.message.answer(
         messages_text,
@@ -48,7 +52,13 @@ async def view_support_messages(callback_query: CallbackQuery):
 
 @router.callback_query(lambda c: c.data.startswith('reply_'))
 async def reply_to_user(callback_query: CallbackQuery, state: FSMContext):
-    user_telegram_id = int(callback_query.data.split('_')[1])
+    logger.info(f"Received callback data: {callback_query.data}")
+
+    try:
+        user_telegram_id = int(callback_query.data.split('_')[1])
+    except (IndexError, ValueError):
+        await callback_query.answer("Ошибка: Неверные данные для ответа.")
+        return
 
     await state.update_data(user_telegram_id=user_telegram_id)
 

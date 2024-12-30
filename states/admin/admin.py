@@ -16,3 +16,7 @@ class ReplenishUser(StatesGroup):
 
 class AdminSupportState(StatesGroup):
     waiting_for_reply = State()
+
+
+class LinkRequest(StatesGroup):
+    waiting_for_link = State()
