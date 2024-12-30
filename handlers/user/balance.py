@@ -13,38 +13,39 @@ router = Router()
 @router.callback_query(lambda c: c.data == 'replenish')
 async def replenish(callback_query: CallbackQuery):
     kb = InlineKeyboardBuilder()
-    kb.add(InlineKeyboardButton(text='100', callback_data='rp_100'))
-    kb.add(InlineKeyboardButton(text='500', callback_data='rp_500'))
-    kb.add(InlineKeyboardButton(text='1000', callback_data='rp_1000'))
+    kb.add(InlineKeyboardButton(text='10 - (1$)', callback_data='rp_10'))
+    kb.add(InlineKeyboardButton(text='50 - (5$)', callback_data='rp_50'))
+    kb.add(InlineKeyboardButton(text='100 - (10$)', callback_data='rp_100'))
 
-    await callback_query.message.answer("Сhoose the amount of coins", reply_markup=kb.as_markup())
+    await callback_query.message.answer("Choose the amount of coins", reply_markup=kb.as_markup())
 
 
 @router.callback_query(lambda c: c.data.startswith('rp_'))
 async def process_replenish(callback_query: CallbackQuery):
-    amount = int(callback_query.data.split('_')[-1])
-    telegram_id = callback_query.from_user.id
+    try:
+        amount = int(callback_query.data.split('_')[-1])
+        telegram_id = callback_query.from_user.id
 
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
+        conn = sqlite3.connect(DB_NAME)
+        cursor = conn.cursor()
 
-    cursor.execute('''
-        SELECT ref_link, reffed_by_worker FROM users WHERE telegram_id = ?
-    ''', (telegram_id,))
-    user_data = cursor.fetchone()
+        cursor.execute('''
+            SELECT ref_link, reffed_by_worker FROM users WHERE telegram_id = ?
+        ''', (telegram_id,))
+        user_data = cursor.fetchone()
 
-    if user_data:
-        referral_link, worker_name = user_data
-    else:
-        referral_link, worker_name = None, None
+        referral_link = user_data[0] if user_data else None
+        worker_name = user_data[1] if user_data else None
 
-    cursor.execute('''
-        INSERT INTO replenishment_requests (telegram_id, amount, referral_link, worker_name, status)
-        VALUES (?, ?, ?, ?, 'pending')
-    ''', (telegram_id, amount, referral_link, worker_name))
-    conn.commit()
-    conn.close()
+        cursor.execute('''
+            INSERT INTO replenishment_requests (telegram_id, amount, referral_link, worker_name, status)
+            VALUES (?, ?, ?, ?, 'pending')
+        ''', (telegram_id, amount, referral_link or "", worker_name or ""))
+        conn.commit()
+        conn.close()
 
-    await callback_query.message.answer(
-        f"Please wait, the administrator will contact you for replenishing {amount} coins."
-    )
+        await callback_query.message.answer(
+            f"Please wait, the administrator will contact you for replenishing {amount} coins."
+        )
+    except Exception as e:
+        await callback_query.message.answer(f"An error occurred: {e}")

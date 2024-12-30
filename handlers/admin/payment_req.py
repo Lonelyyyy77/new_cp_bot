@@ -27,7 +27,7 @@ async def payment_request(callback_query: CallbackQuery):
         request_id, telegram_id, amount, _, worker_name = request
         message_text += f"ID заявки: {request_id}\n"
         message_text += f"ID пользователя: {telegram_id}\n"
-        message_text += f"Сумма пополнения: {amount} монет\n"
+        message_text += f"Сумма пополнения: {amount} монет ~ {amount/10}$\n"
         message_text += f"Реферер: {worker_name if worker_name else 'Не указан'}\n\n"
 
         kb.add(InlineKeyboardButton(
