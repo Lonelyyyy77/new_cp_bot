@@ -12,13 +12,13 @@ router = Router()
 @router.callback_query(lambda c: c.data == 'admin_panel')
 async def admin_panel_handler(callback: CallbackQuery):
     kb = InlineKeyboardBuilder()
-    kb.row(InlineKeyboardButton(text='Добавить воркера', callback_data='add_worker'))
-    kb.row(InlineKeyboardButton(text='Все воркеры', callback_data='view_workers'))
-    kb.row(InlineKeyboardButton(text='Заявки на пополнение', callback_data='payment_req'))
-    kb.row(InlineKeyboardButton(text='Пополнит счет', callback_data='replenish_user'))
-    kb.row(InlineKeyboardButton(text='Посмотреть сообщения в поддержку', callback_data='view_support_messages'))
-    kb.row(InlineKeyboardButton(text='Посмотреть запросы на ссылку канала', callback_data='view_link_request'))
+    kb.row(InlineKeyboardButton(text='➕ Добавить воркера', callback_data='add_worker'))
+    kb.row(InlineKeyboardButton(text='📍 Все воркеры', callback_data='view_workers'))
+    kb.row(InlineKeyboardButton(text='💵 Заявки на пополнение', callback_data='payment_req'))
+    kb.row(InlineKeyboardButton(text='💳 Пополнение счета', callback_data='replenish_user'))
+    kb.row(InlineKeyboardButton(text='📨 Посмотреть сообщения в поддержку', callback_data='view_support_messages'))
+    kb.row(InlineKeyboardButton(text='🖼 Выдача товара', callback_data='view_link_request'))
 
-    await callback.message.edit_text('Вы успешно вошли в панель администратора.', reply_markup=kb.as_markup())
+    await callback.message.edit_text('🟢 Вы успешно вошли в панель администратора.', reply_markup=kb.as_markup())
 
 

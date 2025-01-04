@@ -21,15 +21,15 @@ async def replenish_user(callback_query: CallbackQuery):
         await callback_query.answer("Нет заявок на пополнение.")
         return
 
-    message_text = "Заявки на пополнение:\n\n"
+    message_text = "🤑 Заявки на пополнение:\n\n"
     kb = InlineKeyboardBuilder()
 
     for request in requests:
         request_id, telegram_id, amount, _, worker_name = request
         message_text += f"ID заявки: {request_id}\n"
         message_text += f"ID пользователя: {telegram_id}\n"
-        message_text += f"Сумма пополнения: {amount} монет\n"
-        message_text += f"Реферер: {worker_name if worker_name else 'Не указан'}\n\n"
+        message_text += f"[💵] Сумма пополнения: {amount} монет\n"
+        message_text += f"[🥷] Воркер: {worker_name if worker_name else 'Не указан'}\n\n"
 
         kb.add(InlineKeyboardButton(
             text=f"Пополнить ID {request_id}",
@@ -98,7 +98,7 @@ async def confirm_replenishment(callback_query: CallbackQuery, state: FSMContext
         bot = Bot(token=TOKEN)
         await bot.send_message(
             telegram_id,
-            f"Ваш баланс был пополнен на {amount} монет. Новый баланс: {new_balance} монет."
+            f"[🪙] Ваш баланс был пополнен на {amount} монет. Новый баланс: {new_balance} монет."
         )
 
         # Если указан воркер, начисляем бонус
@@ -113,7 +113,7 @@ async def confirm_replenishment(callback_query: CallbackQuery, state: FSMContext
                 # Оповещаем воркера о бонусе
                 await bot.send_message(
                     worker_id,
-                    f"Вы получили бонус {referral_bonus} монет за пополнение баланса пользователем {telegram_id}."
+                    f"💸 Вы получили бонус {referral_bonus} монет за пополнение баланса пользователем {telegram_id}."
                 )
 
         # Обновляем статус заявки
@@ -123,7 +123,7 @@ async def confirm_replenishment(callback_query: CallbackQuery, state: FSMContext
 
         # Сообщаем администратору об успешном пополнении
         await callback_query.message.edit_text(
-            f"Пользователю ID {telegram_id} начислено {amount} монет. Заявка обновлена."
+            f"[💸] Пользователю ID {telegram_id} начислено {amount} монет. Заявка обновлена."
         )
     except Exception as e:
         await callback_query.message.answer(f"Произошла ошибка: {e}")

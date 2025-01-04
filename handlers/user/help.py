@@ -15,7 +15,7 @@ async def show_help(callback_query: CallbackQuery, state: FSMContext):
     await state.set_state(SupportState.waiting_for_message)
 
     await callback_query.message.answer(
-        "Пожалуйста, введите ваше сообщение для техподдержки."
+        "❓ Пожалуйста, введите ваше сообщение для техподдержки."
     )
 
 
@@ -36,6 +36,6 @@ async def process_support_message(message: Message, state: FSMContext):
     conn.commit()
     conn.close()
 
-    await message.answer("Ваше сообщение отправлено в техподдержку. Мы скоро с вами свяжемся.")
+    await message.answer("✅ Ваше сообщение отправлено в техподдержку. Мы скоро с вами свяжемся.")
 
     await state.clear()

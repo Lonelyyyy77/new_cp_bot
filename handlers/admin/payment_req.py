@@ -17,7 +17,7 @@ async def payment_request(callback_query: CallbackQuery):
     requests = get_all_replenishment_requests_start()
 
     if not requests:
-        await callback_query.answer("Нет заявок на пополнение.")
+        await callback_query.answer("🤷‍♂️ Нет заявок на пополнение.")
         return
 
     message_text = "Заявки на пополнение:\n\n"
@@ -27,8 +27,8 @@ async def payment_request(callback_query: CallbackQuery):
         request_id, telegram_id, amount, _, worker_name = request
         message_text += f"ID заявки: {request_id}\n"
         message_text += f"ID пользователя: {telegram_id}\n"
-        message_text += f"Сумма пополнения: {amount} монет ~ {amount/10}$\n"
-        message_text += f"Реферер: {worker_name if worker_name else 'Не указан'}\n\n"
+        message_text += f"[💵] Сумма пополнения: {amount} монет ~ {amount/10}$\n"
+        message_text += f"[🥷] Воркер: {worker_name if worker_name else 'Не указан'}\n\n"
 
         kb.add(InlineKeyboardButton(
             text=f"Заявка ID {request_id}",
@@ -72,12 +72,12 @@ async def receive_payment_details(message: Message, state: FSMContext):
 
     await message.bot.send_message(
         chat_id=user_id,
-        text=f"Ваши реквизиты для оплаты:\n\n{payment_details}"
+        text=f"💳 Ваши реквизиты для оплаты:\n\n{payment_details}"
     )
 
     cursor.execute("UPDATE replenishment_requests SET status = 'processed' WHERE id = ?", (request_id,))
     conn.commit()
     conn.close()
 
-    await message.answer("Реквизиты отправлены пользователю, заявка обновлена.")
+    await message.answer("💳 Реквизиты отправлены пользователю, заявка обновлена.")
     await state.clear()

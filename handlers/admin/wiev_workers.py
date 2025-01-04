@@ -19,7 +19,7 @@ async def view_workers_handler(callback: CallbackQuery, state: FSMContext):
         back_kb = InlineKeyboardBuilder()
         back_kb.add(InlineKeyboardButton(text="К админ панели 🏡", callback_data="admin_panel"))
 
-        await callback.message.edit_text("Нет воркеров для отображения.", reply_markup=back_kb.as_markup())
+        await callback.message.edit_text("[🥷] Нет воркеров для отображения.", reply_markup=back_kb.as_markup())
         return
 
     page_size = 7
@@ -55,7 +55,7 @@ async def show_workers_page(callback: CallbackQuery, workers, current_page, page
 
         conn.close()
 
-        workers_info += f"ID: {worker_id}, Имя: {worker_name}, " \
+        workers_info += f"[🥷] ID: {worker_id}, Имя: {worker_name}, " \
                         f"Рефералов: {users_referred}, Баланс: {balance} монет\n\n"
 
         keyboard.row(InlineKeyboardButton(
@@ -74,7 +74,7 @@ async def show_workers_page(callback: CallbackQuery, workers, current_page, page
     if navigation_buttons:
         keyboard.row(*navigation_buttons)
 
-    await callback.message.edit_text(f"Список воркеров:\n\n{workers_info}", reply_markup=keyboard.as_markup())
+    await callback.message.edit_text(f"[🥷] Список воркеров:\n\n{workers_info}", reply_markup=keyboard.as_markup())
     await callback.answer()
 
 

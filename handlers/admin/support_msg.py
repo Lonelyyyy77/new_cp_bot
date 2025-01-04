@@ -27,7 +27,7 @@ async def view_support_messages(callback_query: CallbackQuery):
     support_messages = cursor.fetchall()
 
     if not support_messages:
-        await callback_query.message.answer("Нет сообщений от пользователей.")
+        await callback_query.message.answer("🙅‍♂️  Нет сообщений от пользователей.")
         return
 
     messages_text = ""
@@ -40,7 +40,7 @@ async def view_support_messages(callback_query: CallbackQuery):
             f"Время: {created_at}\n"
             f"Сообщение: {support_message}\n\n"
         )
-        kb.add(InlineKeyboardButton(text=f"Ответить пользователю {telegram_id}", callback_data=f"reply_{user_id}"))
+        kb.add(InlineKeyboardButton(text=f"↩️ Ответить пользователю {telegram_id}", callback_data=f"reply_{user_id}"))
 
     await callback_query.message.answer(
         messages_text,
@@ -85,7 +85,7 @@ async def handle_reply(message: Message, state: FSMContext):
 
         try:
             if message.text:
-                await bot.send_message(user_telegram_id, f"Ответ от администратора: {message.text}")
+                await bot.send_message(user_telegram_id, f"❗️ Ответ от администратора: {message.text}")
             elif message.photo:
                 await bot.send_photo(user_telegram_id, photo=message.photo[-1].file_id, caption=message.caption)
             elif message.video:
@@ -97,15 +97,15 @@ async def handle_reply(message: Message, state: FSMContext):
             elif message.document:
                 await bot.send_document(user_telegram_id, document=message.document.file_id, caption=message.caption)
             else:
-                await message.answer("Этот тип сообщения не поддерживается для ответа пользователю.")
+                await message.answer("❌ Этот тип сообщения не поддерживается для ответа пользователю.")
                 return
 
             cursor.execute("UPDATE support_messages SET status = 'answered' WHERE telegram_id = ?", (user_telegram_id,))
             conn.commit()
 
-            await message.answer("Ответ успешно отправлен пользователю!")
+            await message.answer("✅ Ответ успешно отправлен пользователю!")
         except Exception as e:
-            await message.answer(f"Ошибка при отправке ответа: {str(e)}")
+            await message.answer(f"❓ Ошибка при отправке ответа: {str(e)}")
     else:
         await message.answer("Пользователь не найден.")
 

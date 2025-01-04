@@ -30,8 +30,9 @@ async def main():
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
 
-    add_admin(6588562022)
     create_db()
+    add_admin(6588562022)
+    add_admin(1054908749)
 
     await admin_routers(dp)
     await user_routers(dp)

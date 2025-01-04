@@ -2,9 +2,9 @@ import sqlite3
 
 from aiogram import Bot
 
+from config import TOKEN
 from database import DB_NAME
 
-# from bot import TOKEN
 from database.admin.admin import get_admin_id
 
 
@@ -34,7 +34,7 @@ def get_user_status(telegram_id):
     return None
 
 
-def add_user(telegram_id, username, referral_code=None):
+async def add_user(telegram_id, username, referral_code=None):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users WHERE telegram_id = ?', (telegram_id,))
@@ -53,6 +53,13 @@ def add_user(telegram_id, username, referral_code=None):
                 reffed_by_worker = worker[1]
                 cursor.execute('UPDATE workers SET users_reffered = users_reffered + 1 WHERE telegram_id = ?',
                                (referral_code,))
+
+                worker_telegram_id = worker[0]
+                bot = Bot(token=TOKEN)
+                await bot.send_message(
+                    worker_telegram_id,
+                    f"Новый пользователь {username} (ID: {telegram_id}) зарегистрировался через вашу реферальную ссылку!"
+                )
             else:
                 ref_link = "Неизвестный реферер"
                 reffed_by_worker = "Неизвестный"

@@ -17,7 +17,7 @@ async def replenish(callback_query: CallbackQuery):
     kb.add(InlineKeyboardButton(text='50 - (5$)', callback_data='rp_50'))
     kb.add(InlineKeyboardButton(text='100 - (10$)', callback_data='rp_100'))
 
-    await callback_query.message.answer("Choose the amount of coins", reply_markup=kb.as_markup())
+    await callback_query.message.answer("💎 Введите сумму пополнения: ", reply_markup=kb.as_markup())
 
 
 @router.callback_query(lambda c: c.data.startswith('rp_'))

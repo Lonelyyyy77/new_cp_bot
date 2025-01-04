@@ -14,7 +14,7 @@ async def save_link_request(telegram_id: int, channel_name: str):
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
 
-    message = f"Запрос на ссылку канала {channel_name} от пользователя ID {telegram_id}"
+    message = f"🛡 Запрос на ссылку канала {channel_name} от пользователя ID {telegram_id}"
 
     cursor.execute('''
         INSERT INTO link_requests (telegram_id, channel_name, message)
@@ -26,12 +26,12 @@ async def save_link_request(telegram_id: int, channel_name: str):
     admin_id = get_admin_id()
     if admin_id:
         kb = InlineKeyboardBuilder()
-        kb.row(InlineKeyboardButton(text='Посмотреть запросы на ссылки', callback_data='view_link_request'))
+        kb.row(InlineKeyboardButton(text='🔑 Посмотреть запросы на ссылки', callback_data='view_link_request'))
 
         bot = Bot(token=TOKEN)
         await bot.send_message(
             admin_id,
-            f"Пользователь с ID {telegram_id} запросил ссылку на канал: {channel_name}.",
+            f"🔑 Пользователь с ID {telegram_id} запросил ссылку на канал: {channel_name}.",
             reply_markup=kb.as_markup()
         )
 
@@ -40,16 +40,16 @@ async def save_link_request(telegram_id: int, channel_name: str):
 async def show_catalogue(callback_query: CallbackQuery):
     kb = InlineKeyboardBuilder()
     kb.row(
-        InlineKeyboardButton(text='Photos - 45 coins', callback_data='buy_photos')
+        InlineKeyboardButton(text='Photos Only - 45 💎', callback_data='buy_photos')
     )
     kb.row(
-        InlineKeyboardButton(text='Videos + Photos - 90 coins', callback_data='buy_videos_photos')
+        InlineKeyboardButton(text='Videos + Photos - 90 💎', callback_data='buy_videos_photos')
     )
 
     await callback_query.message.answer(
-        '🏷️ Сейчас действует скидка 10% 🏷️\n\n'
-        'Photos - 50 → 45 coins\n'
-        'Videos + Photos - 100 → 90 coins',
+        '🏷️ Сейчас действует скидка 10%! 🏷️\n\n'
+        'Photos - 50 → 45 💎\n'
+        'Videos + Photos - 100 → 90 💎',
         reply_markup=kb.as_markup()
     )
 
@@ -85,7 +85,7 @@ async def process_purchase(callback_query: CallbackQuery, price: int):
     user = cursor.fetchone()
 
     if not user:
-        await callback_query.message.answer('Ваш профиль не найден. Пожалуйста, зарегистрируйтесь.')
+        await callback_query.message.answer('❌ Ваш профиль не найден. Пожалуйста, зарегистрируйтесь.')
         conn.close()
         return
 
@@ -96,13 +96,13 @@ async def process_purchase(callback_query: CallbackQuery, price: int):
         cursor.execute('UPDATE users SET balance = ? WHERE telegram_id = ?', (new_balance, telegram_id))
         conn.commit()
 
-        await callback_query.message.answer("Спасибо за запрос! Ожидайте, администратор свяжется с вами.")
+        await callback_query.message.answer("✅ Спасибо за запрос! Ожидайте, администратор свяжется с вами.")
     else:
         kb = InlineKeyboardBuilder()
         kb.add(InlineKeyboardButton(text='Пополнить', callback_data='replenish'))
 
         await callback_query.message.answer(
-            f'Недостаточно монет! Вам нужно ещё {price - user_coins} монет. Чтобы пополнить баланс, нажмите кнопку:',
+            f'🚫 Недостаточно 💎! Вам нужно ещё {price - user_coins} 💎. Чтобы пополнить баланс, нажмите кнопку:',
             reply_markup=kb.as_markup()
         )
 

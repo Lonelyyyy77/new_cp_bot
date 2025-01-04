@@ -2,7 +2,7 @@ import sqlite3
 
 from database import DB_NAME
 
-BOT_USERNAME = "fsdlkfhjklwse_bot" # TODO: REPLACE
+BOT_USERNAME = "k1dsParadiseShopBot"  # TODO: REPLACE
 
 
 def get_referral_link(telegram_id):

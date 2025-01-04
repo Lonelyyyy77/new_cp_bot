@@ -23,7 +23,7 @@ async def view_link_requests(callback_query: CallbackQuery):
     conn.close()
 
     if not requests:
-        await callback_query.message.answer("Нет новых запросов на ссылки.")
+        await callback_query.message.answer("🤷‍♂️ Нет новых запросов на ссылки.")
         return
 
     messages = []
@@ -82,7 +82,7 @@ async def reply_to_link_request(callback_query: CallbackQuery, state: FSMContext
         #     await callback_query.message.answer(f"Пользователь с Telegram ID {telegram_id} не найден.")
 
         # Просим ввести ссылку
-        await callback_query.message.answer("Введите ссылку для отправки пользователю.")
+        await callback_query.message.answer("🔗 Введите ссылку для отправки пользователю.")
 
     except (IndexError, ValueError) as e:
         await callback_query.answer("Ошибка: Неверные данные для ответа.")
@@ -117,7 +117,7 @@ async def handle_link_reply(message: Message, state: FSMContext):
     conn.close()
 
     bot = Bot(token=TOKEN)
-    await bot.send_message(telegram_id, f"Вот ваша ссылка на канал {channel_name}: {link}")
+    await bot.send_message(telegram_id, f"❤️ Ваша ссылка-приглашение:  {channel_name}: {link}")
 
-    await message.answer(f"Ссылка успешно отправлена пользователю с ID {telegram_id}.")
+    await message.answer(f"💌 Ссылка успешно отправлена пользователю с ID {telegram_id}.")
     await state.clear()
