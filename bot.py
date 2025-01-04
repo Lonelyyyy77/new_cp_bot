@@ -31,8 +31,8 @@ async def main():
     dp = Dispatcher()
 
     create_db()
-    add_admin(6588562022)
-    add_admin(1054908749)
+    # add_admin(6588562022)
+    add_admin(7148679854)
 
     await admin_routers(dp)
     await user_routers(dp)
