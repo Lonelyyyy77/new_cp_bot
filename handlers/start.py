@@ -35,17 +35,17 @@ async def start_handler(message: Message):
     elif status == "user":
         user_kb = InlineKeyboardBuilder()
         user_kb.add(InlineKeyboardButton(text='Каталог Товаров', callback_data='catalogue'))
-        user_kb.add(InlineKeyboardButton(text='Тех. Поддержка', callback_data='help'))
-        user_kb.add(InlineKeyboardButton(text='Баланс', callback_data='replenish'))
+        user_kb.row(InlineKeyboardButton(text='Тех. Поддержка', callback_data='help'))
+        user_kb.row(InlineKeyboardButton(text='Баланс', callback_data='replenish'))
 
         await message.answer(f"❤️ Привет, пользователь! Рады видеть вас снова.\n\nВаш баланс: {balance} монет.",
                              reply_markup=user_kb.as_markup())
     else:
         await add_user(telegram_id, username, referral_code)
         user_kb = InlineKeyboardBuilder()
-        user_kb.add(InlineKeyboardButton(text='Catalogue', callback_data='catalogue'))
-        user_kb.add(InlineKeyboardButton(text='HELP', callback_data='help'))
-        user_kb.add(InlineKeyboardButton(text='Balance', callback_data='replenish'))
+        user_kb.add(InlineKeyboardButton(text='Каталог Товаров', callback_data='catalogue'))
+        user_kb.row(InlineKeyboardButton(text='Тех. Поддержка', callback_data='help'))
+        user_kb.row(InlineKeyboardButton(text='Баланс', callback_data='replenish'))
 
         await message.answer("❤️ Добро пожаловать! \n🧸 Тут ты сможешь купить тот самый качественный материал за небольшую цену! 🧸 ",
                              reply_markup=user_kb.as_markup())
